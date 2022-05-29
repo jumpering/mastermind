@@ -16,14 +16,16 @@ function playGame() {
     const SECRET_COMBINATION = setSecretCombination();
     let winner = false;
     const MAIN_TITLE = '\n----- MASTERMIND -----\n \n 0 attempt(s):\ ****'
+    const MESSAGE_ATTEMPTS = " attempt(s): ";
+    const MESSAGE_ASTERISCS = "****";
 
     console.writeln(MAIN_TITLE);
 
     do {
         proposedCombination = getProposedCombination();
         attempts.push(proposedCombination);
-        console.writeln(attempts.length + " attempt(s): ");
-        console.writeln("****");
+        console.writeln(attempts.length + MESSAGE_ATTEMPTS);
+        console.writeln(MESSAGE_ASTERISCS);
         console.writeln(showResults(attempts));
     }while ( !winner && attempts.length < MAX_ATTEMPTS );
 
@@ -34,14 +36,18 @@ function playGame() {
 
     function getProposedCombination() {
         const VALID_COLORS = ['r', 'g', 'b', 'y', 'c', 'm'];
+        const MESSAGE_PROPOSECOMBINATION = "Propose a combination:";
+        const MESSAGE_WRONG_PROPOSECOMBINATION = "Wrong proposed combination length";
+        const MESSAGE_WRONG_INPUT = "Wrong colors, they must be unique and: rgybmc";
+
         let combination;
         let validCombination;
 
         do {
             combination = [];
-            combination = console.readString("Propose a combination:");
+            combination = console.readString(MESSAGE_PROPOSECOMBINATION);
             if (combination.length != 4) {
-                console.writeln("Wrong proposed combination length");
+                console.writeln(MESSAGE_WRONG_PROPOSECOMBINATION);
             }
         } while ( !isCorrectLengthAndColors(combination) );
 
@@ -63,7 +69,7 @@ function playGame() {
             }
 
             if (validCombination.length != 4) {
-                console.writeln("Wrong colors, they must be unique and: rgybmc");
+                console.writeln(MESSAGE_WRONG_INPUT);
             }
             return validCombination.length == 4;
         }
@@ -73,10 +79,14 @@ function playGame() {
     function showResults(attempts) {
         let blacks = 0;
         let whites = 0;
+        const MESSAGE_ARROW = "-->";
+        const MESSAGE_BLACKS = " blacks and ";
+        const MESSAGE_WHITES = " whites";
+
 
         for (let attempt of attempts) {
             calculateResults(attempt);
-            console.writeln(attempt + "-->" + + blacks + " blacks and " + whites + " whites");
+            console.writeln(attempt + MESSAGE_ARROW + + blacks + MESSAGE_BLACKS + whites + MESSAGE_WHITES);
             blacks = 0;
             whites = 0;
         }
@@ -110,10 +120,13 @@ function playGame() {
 
 function isResumed() {
     let answer;
+    const MESSAGE_RESUME = "Do you want to play again? (y/n)";
+    const YES = "y";
+    const NO = "n";
 
     do{
-        answer = console.readString("Do you want to play again? (y/n)");
-    }while (answer != "y" && answer != "n");
+        answer = console.readString(MESSAGE_RESUME);
+    }while (answer != YES && answer != NO);
 
-    return answer === "y";
+    return answer === YES;
 }
