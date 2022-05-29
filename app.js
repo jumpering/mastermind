@@ -100,7 +100,6 @@ function playGame() {
                         match = false;
                     }
                 }
-                match = false;
                 if (blacks == 4) {
                     winner = true;
                 }
