@@ -86,12 +86,12 @@ function playGame() {
         for (let attempt of attempts) {
             calculateResults(attempt);
             console.writeln(attempt + MESSAGE_ARROW + + blacks + MESSAGE_BLACKS + whites + MESSAGE_WHITES);
-            blacks = 0;
-            whites = 0;
         }
 
         function calculateResults(attempt) {
             let match = false;
+            blacks = 0;
+            whites = 0;
 
             for (let i = 0; i < attempt.length; i++) {
                 for (let j = 0; j < SECRET_COMBINATION.length; j++) {
