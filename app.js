@@ -27,7 +27,7 @@ function playGame() {
         console.writeln(attempts.length + MESSAGE_ATTEMPTS);
         console.writeln(MESSAGE_ASTERISCS);
         console.writeln(showResults(attempts));
-    }while ( !winner && attempts.length < MAX_ATTEMPTS );
+    } while (!winner && attempts.length < MAX_ATTEMPTS);
 
     function setSecretCombination() {
         //todo math.random
@@ -39,17 +39,16 @@ function playGame() {
         const MESSAGE_PROPOSECOMBINATION = "Propose a combination:";
         const MESSAGE_WRONG_PROPOSECOMBINATION = "Wrong proposed combination length";
         const MESSAGE_WRONG_INPUT = "Wrong colors, they must be unique and: rgybmc";
-
         let combination;
         let validCombination;
 
         do {
             combination = [];
             combination = console.readString(MESSAGE_PROPOSECOMBINATION);
-            if (combination.length != 4) {
+            if (combination.length != SECRET_COMBINATION.length) {
                 console.writeln(MESSAGE_WRONG_PROPOSECOMBINATION);
             }
-        } while ( !isCorrectLengthAndColors(combination) );
+        } while (!isCorrectLengthAndColors(combination));
 
         function isCorrectLengthAndColors(combination) {
             validCombination = [];
@@ -68,10 +67,10 @@ function playGame() {
                 }
             }
 
-            if (validCombination.length != 4) {
+            if (validCombination.length != SECRET_COMBINATION.length) {
                 console.writeln(MESSAGE_WRONG_INPUT);
             }
-            return validCombination.length == 4;
+            return validCombination.length == SECRET_COMBINATION.length;
         }
         return combination;
     }
@@ -110,7 +109,7 @@ function playGame() {
                         match = false;
                     }
                 }
-                if (blacks == 4) {
+                if (blacks == SECRET_COMBINATION.length) {
                     winner = true;
                 }
             }
@@ -124,9 +123,9 @@ function isResumed() {
     const YES = "y";
     const NO = "n";
 
-    do{
+    do {
         answer = console.readString(MESSAGE_RESUME);
-    }while (answer != YES && answer != NO);
+    } while (answer != YES && answer != NO);
 
     return answer === YES;
 }
