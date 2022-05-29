@@ -76,8 +76,8 @@ function playGame() {
     }
 
     function showResults(attempts) {
-        let blacks = 0;
-        let whites = 0;
+        let blacks;
+        let whites;
         const MESSAGE_ARROW = "-->";
         const MESSAGE_BLACKS = " blacks and ";
         const MESSAGE_WHITES = " whites";
