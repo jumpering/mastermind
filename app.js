@@ -11,31 +11,34 @@ function playMastermind() {
 
 function playGame() {
     const MAX_ATTEMPTS = 10;
-    let attempts = [];
-    let proposedCombination;
-    const SECRET_COMBINATION = setSecretCombination();
-    let winner = false;
+    const COMBINATION_LENGTH = 4;
+    const VALID_COLORS = ['r', 'g', 'b', 'y', 'c', 'm'];
     const MAIN_TITLE = '\n----- MASTERMIND -----\n \n 0 attempt(s):\ ****'
     const MESSAGE_ATTEMPTS = " attempt(s): ";
     const MESSAGE_ASTERISCS = "****";
 
+    const SECRET_COMBINATION = setSecretCombination(VALID_COLORS, COMBINATION_LENGTH);
+
+    let proposedCombination;
+    let attempts = [];
+    let winner = false;
+
     console.writeln(MAIN_TITLE);
 
     do {
-        proposedCombination = getProposedCombination();
+        proposedCombination = getProposedCombination(VALID_COLORS, COMBINATION_LENGTH);
         attempts.push(proposedCombination);
         console.writeln(attempts.length + MESSAGE_ATTEMPTS);
         console.writeln(MESSAGE_ASTERISCS);
         console.writeln(showResults(attempts));
     } while (!winner && attempts.length < MAX_ATTEMPTS);
 
-    function setSecretCombination() {
-        //todo math.random
+    function setSecretCombination(colors, combinationLength) {
+        //todo math.random //mocked secretCombination
         return ['r', 'g', 'b', 'y'];
     }
 
-    function getProposedCombination() {
-        const VALID_COLORS = ['r', 'g', 'b', 'y', 'c', 'm'];
+    function getProposedCombination(colors, combinationLength) {
         const MESSAGE_PROPOSECOMBINATION = "Propose a combination:";
         const MESSAGE_WRONG_PROPOSECOMBINATION = "Wrong proposed combination length";
         const MESSAGE_WRONG_INPUT = "Wrong colors, they must be unique and: rgybmc";
@@ -45,7 +48,7 @@ function playGame() {
         do {
             combination = [];
             combination = console.readString(MESSAGE_PROPOSECOMBINATION);
-            if (combination.length != SECRET_COMBINATION.length) {
+            if (combination.length != combinationLength) {
                 console.writeln(MESSAGE_WRONG_PROPOSECOMBINATION);
             }
         } while (!isCorrectLengthAndColors(combination));
@@ -54,8 +57,8 @@ function playGame() {
             validCombination = [];
             let usedColors = [];
 
-            for (let i = 0; i < VALID_COLORS.length; i++) {
-                usedColors[i] = VALID_COLORS[i];
+            for (let i = 0; i < colors.length; i++) {
+                usedColors[i] = colors[i];
             }
 
             for (let i = 0; i < usedColors.length; i++) {
@@ -67,10 +70,10 @@ function playGame() {
                 }
             }
 
-            if (validCombination.length != SECRET_COMBINATION.length) {
+            if (validCombination.length != combinationLength) {
                 console.writeln(MESSAGE_WRONG_INPUT);
             }
-            return validCombination.length == SECRET_COMBINATION.length;
+            return validCombination.length == combinationLength;
         }
         return combination;
     }
