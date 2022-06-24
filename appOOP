@@ -13,8 +13,8 @@ function playMastermind() {
         let game = createGame();
         game.initGame();
         do {
-            let combination = createCombination();
-            let proposedCombination = combination.askForProposedCombination();
+            let proposedCombination = createCombination();
+            proposedCombination.askForProposedCombination();
             game.addProposedCombinationToAttempts(proposedCombination);
             game.checkBlacksAndWhites(proposedCombination);
             game.showBoard();
@@ -43,9 +43,9 @@ function playMastermind() {
                     for (let i = 0; i < this.attempts.length; i++) {
                         console.writeln(this.attempts[i].toString()
                             + " --> "
-                            + this.attempts[i].howManyColorsInSamePosition
+                            + this.attempts[i].howManyColorsInSamePosition()
                             + " blacks and "
-                            + this.attempts[i].howManyColorsInDiferentPosition
+                            + this.attempts[i].howManyColorsInDiferentPosition()
                             + " whites");
                     }
                 },
