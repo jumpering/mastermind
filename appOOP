@@ -94,8 +94,6 @@ function playMastermind() {
                             }
                         } while (repeated);
                     }
-
-                    secretCombination = "rgby"; //mock
                     this.colors = secretCombination;
 
                     function searchColor(color, colors) {
@@ -109,11 +107,11 @@ function playMastermind() {
                 },
 
                 howManyColorsInSamePosition: function (combination) {
-                    return 2; //todo implement logic
+                    return 2; //mock todo implement logic
                 },
 
                 howManyColorsInDiferentPosition: function (combination) {
-                    return 3; //todo implement logic
+                    return 3; //mock todo implement logic
                 }
             }
         };
