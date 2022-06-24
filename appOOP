@@ -1,0 +1,145 @@
+const { Console } = require("console-mpds");
+const console = new Console();
+playMastermind();
+
+function playMastermind() {
+    let resume = createYesNoDialog();
+    do {
+        playGame();
+        resume.askQuestion("¿Play again?");
+    } while (resume.isAffirmative());
+
+    function playGame() {
+        let game = createGame();
+        game.initGame();
+        do {
+            let combination = createCombination();
+            let proposedCombination = combination.askForProposedCombination();
+            game.addProposedCombinationToAttempts(proposedCombination);
+            game.checkBlacksAndWhites(proposedCombination);
+            game.showBoard();
+        } while (!game.isEnded());
+
+        function createGame() {
+            return {
+                ATTEMPTS_MAX_LENGTH: 10,
+                COLORS: "rgbym",
+                COMBINATION_LENGTH: 4,
+                attempts: [],
+                blacks: 0,
+                whites: 0,
+                winner: false,
+                secretCombination: createCombination(),
+
+                initGame: function () {
+                    console.writeln("-----MASTERMIND------\n");
+                    this.secretCombination.generateSecretCombination();
+                    this.showBoard();
+                },
+
+                showBoard: function () {
+                    console.writeln(this.attempts.length + " attempt(s):");
+                    console.writeln("****");
+                    for (let i = 0; i < this.attempts.length; i++) {
+                        console.writeln(this.attempts[i].toString()
+                            + " --> "
+                            + this.attempts[i].howManyColorsInSamePosition
+                            + " blacks and "
+                            + this.attempts[i].howManyColorsInDiferentPosition
+                            + " whites");
+                    }
+                },
+
+                addProposedCombinationToAttempts: function (proposedCombination) {
+                    this.attempts[this.attempts.length] = proposedCombination;
+                },
+
+                isEnded: function () {
+                    return this.attempts.length >= this.ATTEMPTS_MAX_LENGTH || this.winner === true;
+                },
+
+                checkBlacksAndWhites: function (proposedCombination) {
+                    this.blacks = this.secretCombination.howManyColorsInSamePosition(proposedCombination);
+                    this.whites = this.secretCombination.howManyColorsInDiferentPosition(proposedCombination);
+                    if (this.blacks === this.secretCombination.length) {
+                        this.winner = true;
+                    }
+                }
+            }
+        }
+
+        function createCombination() {
+            return {
+                VALID_COLORS: "rgbym",
+                COMBINATION_LENGTH: 4,
+                colors: "",
+
+                askForProposedCombination: function () {
+                    this.colors = console.readString("Proposed Combination:"); //todo without check
+                },
+
+                toString: function () {
+                    return this.colors;
+                },
+
+                generateSecretCombination: function () {
+                    let secretCombination = "";
+                    for (let i = 0; i < this.COMBINATION_LENGTH; i++) {
+                        let repeated;
+                        do {
+                            let randomColor = this.VALID_COLORS[parseInt(Math.random() * this.VALID_COLORS.length)];
+                            repeated = searchColor(randomColor, secretCombination);
+                            if (!repeated) {
+                                secretCombination += randomColor;
+                            }
+                        } while (repeated);
+                    }
+
+                    secretCombination = "rgby"; //mock
+                    this.colors = secretCombination;
+
+                    function searchColor(color, colors) {
+                        for (let i = 0; i < colors.length; i++) {
+                            if (colors[i] === color) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                },
+
+                howManyColorsInSamePosition: function (combination) {
+                    return 2; //todo implement logic
+                },
+
+                howManyColorsInDiferentPosition: function (combination) {
+                    return 3; //todo implement logic
+                }
+            }
+        };
+    }
+
+    function createYesNoDialog() {
+        return {
+            YES: "yes",
+            NO: "no",
+            response: "",
+            error: false,
+
+            askQuestion: function (question) {
+                do {
+                    this.response = console.readString(question);
+                    this.error = this.response != this.YES && this.response != this.NO;
+                    if (this.error) {
+                        console.writeln("response must be " + this.YES + " or " + this.NO);
+                    }
+                } while (this.error);
+                return this.response;
+            },
+
+            isAffirmative: function () {
+                return this.response === this.YES;
+            }
+        }
+    }
+}

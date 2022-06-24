@@ -31,6 +31,7 @@ function playGame() {
         console.writeln(attempts.length + MESSAGE_ATTEMPTS);
         console.writeln(MESSAGE_ASTERISCS);
         console.writeln(showResults(attempts));
+        
     } while (!winner && attempts.length < MAX_ATTEMPTS);
 
     function setSecretCombination(colors, combinationLength) {
@@ -51,9 +52,9 @@ function playGame() {
             if (combination.length != combinationLength) {
                 console.writeln(MESSAGE_WRONG_PROPOSECOMBINATION);
             }
-        } while (!isCorrectLengthAndColors(combination));
+        } while (!isCorrectColors(combination));
 
-        function isCorrectLengthAndColors(combination) {
+        function isCorrectColors(combination) {
             validCombination = [];
             let usedColors = [];
 
