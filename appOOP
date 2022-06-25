@@ -11,13 +11,17 @@ function playMastermind() {
 
     function playGame() {
         let game = createGame();
+        let board = createBoard(game);
         game.initGame();
+        board.showIntroMessage();
+        board.show();
+
         do {
             let proposedCombination = createCombination();
             proposedCombination.askForProposedCombination();
             game.addProposedCombinationToAttempts(proposedCombination);
             game.checkBlacksAndWhites(proposedCombination);
-            game.showBoard();
+            board.show();
         } while (!game.isEnded());
 
         function createGame() {
@@ -32,22 +36,7 @@ function playMastermind() {
                 secretCombination: createCombination(),
 
                 initGame: function () {
-                    console.writeln("-----MASTERMIND------\n");
                     this.secretCombination.generateSecretCombination();
-                    this.showBoard();
-                },
-
-                showBoard: function () {
-                    console.writeln(this.attempts.length + " attempt(s):");
-                    console.writeln("****");
-                    for (let i = 0; i < this.attempts.length; i++) {
-                        console.writeln(this.attempts[i].toString()
-                            + " --> "
-                            + this.attempts[i].howManyColorsInSamePosition()
-                            + " blacks and "
-                            + this.attempts[i].howManyColorsInDiferentPosition()
-                            + " whites");
-                    }
                 },
 
                 addProposedCombinationToAttempts: function (proposedCombination) {
@@ -63,6 +52,34 @@ function playMastermind() {
                     this.whites = this.secretCombination.howManyColorsInDiferentPosition(proposedCombination);
                     if (this.blacks === this.secretCombination.length) {
                         this.winner = true;
+                    }
+                }
+            }
+        }
+
+        function createBoard(game){
+            return{
+                MESSAGE_MASTERMIND: "-----MASTERMIND------\n",
+                MESSAGE_ASTERISCS: "****",
+                MESSAGE_ATTEMPTS: " attempt(s):",
+                MESSAGE_ARROW: " --> ",
+                MESSAGE_BLACKS: " blacks and ",
+                MESSAGE_WHITES: " whites",
+
+                showIntroMessage: function (){
+                    console.writeln(this.MESSAGE_MASTERMIND);
+                },
+
+                show: function () {
+                    console.writeln(game.attempts.length + this.MESSAGE_ATTEMPTS);
+                    console.writeln(this.MESSAGE_ASTERISCS);
+                    for (let i = 0; i < game.attempts.length; i++) {
+                        console.writeln(game.attempts[i].toString()
+                            + this.MESSAGE_ARROW
+                            + game.attempts[i].howManyColorsInSamePosition()
+                            + this.MESSAGE_BLACKS
+                            + game.attempts[i].howManyColorsInDiferentPosition()
+                            + this.MESSAGE_WHITES);
                     }
                 }
             }
