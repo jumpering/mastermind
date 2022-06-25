@@ -114,41 +114,40 @@ function playMastermind() {
                         }
                     }
                     return false;
-                }
-            },
+                },
 
                 howManyColorsInSamePosition: function (combination) {
                     return 2; //mock todo implement logic
                 },
 
-            howManyColorsInDiferentPosition: function (combination) {
-                return 3; //mock todo implement logic
+                howManyColorsInDiferentPosition: function (combination) {
+                    return 3; //mock todo implement logic
+                }
+            }
+        };
+    }
+
+    function createYesNoDialog() {
+        return {
+            YES: "yes",
+            NO: "no",
+            response: "",
+            error: false,
+
+            askQuestion: function (question) {
+                do {
+                    this.response = console.readString(question);
+                    this.error = this.response != this.YES && this.response != this.NO;
+                    if (this.error) {
+                        console.writeln("response must be " + this.YES + " or " + this.NO);
+                    }
+                } while (this.error);
+                return this.response;
+            },
+
+            isAffirmative: function () {
+                return this.response === this.YES;
             }
         }
-    };
-}
-
-function createYesNoDialog() {
-    return {
-        YES: "yes",
-        NO: "no",
-        response: "",
-        error: false,
-
-        askQuestion: function (question) {
-            do {
-                this.response = console.readString(question);
-                this.error = this.response != this.YES && this.response != this.NO;
-                if (this.error) {
-                    console.writeln("response must be " + this.YES + " or " + this.NO);
-                }
-            } while (this.error);
-            return this.response;
-        },
-
-        isAffirmative: function () {
-            return this.response === this.YES;
-        }
     }
-}
 }
