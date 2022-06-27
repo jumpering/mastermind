@@ -17,7 +17,7 @@ function playMastermind() {
         do {
             board.showAttempts();
             let proposedCombination = createCombination();
-            proposedCombination.askForProposedCombination();
+            proposedCombination.askForProposedCombination(); //todo in Board
             game.addProposedCombinationToAttempts(proposedCombination);
             game.isWinner(proposedCombination);
         } while (!game.isEnded());
