@@ -17,7 +17,7 @@ function playMastermind() {
         do {
             board.show();
             let proposedCombination = createCombination();
-            board.askForProposedCombination(proposedCombination);
+            proposedCombination.askForProposedCombination();
             game.addProposedCombinationToAttempts(proposedCombination);
             game.isWinner(proposedCombination);
         } while (!game.isEnded());
@@ -73,25 +73,6 @@ function playMastermind() {
                             + game.attempts[i].howManyColorsInDiferentPosition()
                             + this.MESSAGE_WHITES);
                     }
-                },
-
-                askForProposedCombination: function (proposedCombination) {//todo implement show user input errors
-                    proposedCombination.askForProposedCombination();
-                },
-
-                errorCodes: function () {
-                    return {
-                        WRONG_LENGTH_ERROR: "Wrong proposed combination length",
-                        WRONG_COLOR_ERROR: "Wrong colors, they must be: " + game.COLORS,
-                        REPEATED_COLOR_ERROR: "Wrong proposed combination, at least one color is repeated"
-                    }
-                },
-
-                showProposedCombinationError: function (errorsLength) {
-                    const errorCode = this.errorCodes;
-                    for (let i = 0; i < errorsLength; i++) {
-                        console.writeln(errorCode[i]);
-                    }
                 }
             }
         }
@@ -102,7 +83,7 @@ function playMastermind() {
                 COMBINATION_LENGTH: 4,
                 colors: "",
 
-                askForProposedCombination: function () {
+                askForProposedCombination: function () { //todo implement user input errors
                     this.colors = console.readString("Proposed Combination:");
                 },
 
