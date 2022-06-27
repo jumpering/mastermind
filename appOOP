@@ -15,7 +15,7 @@ function playMastermind() {
         game.initGame();
         board.showIntroMessage();
         do {
-            board.show();
+            board.showAttempts();
             let proposedCombination = createCombination();
             proposedCombination.askForProposedCombination();
             game.addProposedCombinationToAttempts(proposedCombination);
@@ -62,15 +62,15 @@ function playMastermind() {
                     console.writeln(this.MESSAGE_MASTERMIND);
                 },
 
-                show: function () {
+                showAttempts: function() {
                     console.writeln(game.attempts.length + this.MESSAGE_ATTEMPTS);
                     console.writeln(this.MESSAGE_ASTERISCS);
                     for (let i = 0; i < game.attempts.length; i++) {
                         console.writeln(game.attempts[i].toString()
                             + this.MESSAGE_ARROW
-                            + game.attempts[i].howManyColorsInSamePosition()
+                            + game.attempts[i].howManyColorsInSamePosition(game.secretCombination)
                             + this.MESSAGE_BLACKS
-                            + game.attempts[i].howManyColorsInDiferentPosition()
+                            + game.attempts[i].howManyColorsInDiferentPosition(game.secretCombination)
                             + this.MESSAGE_WHITES);
                     }
                 }
