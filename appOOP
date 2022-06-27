@@ -14,11 +14,10 @@ function playMastermind() {
         let board = createBoard(game);
         game.initGame();
         board.showIntroMessage();
-
         do {
             board.show();
             let proposedCombination = createCombination();
-            proposedCombination.askForProposedCombination();
+            board.askForProposedCombination(proposedCombination);
             game.addProposedCombinationToAttempts(proposedCombination);
             game.isWinner(proposedCombination);
         } while (!game.isEnded());
@@ -74,6 +73,25 @@ function playMastermind() {
                             + game.attempts[i].howManyColorsInDiferentPosition()
                             + this.MESSAGE_WHITES);
                     }
+                },
+
+                askForProposedCombination: function (proposedCombination) {//todo implement show user input errors
+                    proposedCombination.askForProposedCombination();
+                },
+
+                errorCodes: function () {
+                    return {
+                        WRONG_LENGTH_ERROR: "Wrong proposed combination length",
+                        WRONG_COLOR_ERROR: "Wrong colors, they must be: " + game.COLORS,
+                        REPEATED_COLOR_ERROR: "Wrong proposed combination, at least one color is repeated"
+                    }
+                },
+
+                showProposedCombinationError: function (errorsLength) {
+                    const errorCode = this.errorCodes;
+                    for (let i = 0; i < errorsLength; i++) {
+                        console.writeln(errorCode[i]);
+                    }
                 }
             }
         }
@@ -85,7 +103,7 @@ function playMastermind() {
                 colors: "",
 
                 askForProposedCombination: function () {
-                    this.colors = console.readString("Proposed Combination:"); //todo without check
+                    this.colors = console.readString("Proposed Combination:");
                 },
 
                 toString: function () {
@@ -116,12 +134,12 @@ function playMastermind() {
                     return false;
                 },
 
-                howManyColorsInSamePosition: function (combination) {
-                    return 2; //mock todo implement logic
+                howManyColorsInSamePosition: function (combination) {//todo implement logic
+                    return 2; 
                 },
 
-                howManyColorsInDiferentPosition: function (combination) {
-                    return 3; //mock todo implement logic
+                howManyColorsInDiferentPosition: function (combination) {//todo implement logic
+                    return 3; 
                 }
             }
         };
