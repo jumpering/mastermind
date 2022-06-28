@@ -78,16 +78,17 @@ function playMastermind() {
                 askForProposedCombination: function () {
                     let colors = "";
                     let errors = [];
+                    let errorCodes = this.errorCodes();
                     do {
-                        colors = console.readString("Proposed Combination: ");
-                        if (this.proposedCombination.isValidLength(colors.length)) {
-                            errors[errors.length] = this.errorCodes.WRONG_LENGTH_ERROR;
+                        this.proposedCombination.setColors(console.readString("Proposed Combination: "));
+                        if (!this.proposedCombination.isValidLength()) {
+                            errors[errors.length] = errorCodes.WRONG_LENGTH_ERROR;
                         }
-                        if (this.proposedCombination.isValidColors(colors)) {
-                            errors[errors.length] = this.errorCodes.WRONG_COLOR_ERROR;
+                        if (!this.proposedCombination.isValidColors()) {
+                            errors[errors.length] = errorCodes.WRONG_COLOR_ERROR;
                         }
-                        if (this.proposedCombination.isUniqueColors(colors)) {
-                            errors[errors.length] = this.errorCodes.REPEATED_COLOR_ERROR;
+                        if (!this.proposedCombination.isUniqueColors()) {
+                            errors[errors.length] = errorCodes.REPEATED_COLOR_ERROR;
                         }
                         this.showProposedInputErrors(errors);
                     } while (errors.length != 0);
@@ -134,11 +135,11 @@ function playMastermind() {
                     this.colors = secretCombination;
                 },
 
-                isUniqueColors: function (colors) {
+                isUniqueColors: function () {
                     let uniqueColor = true;
-                    for (let i = 0; uniqueColor && i < colors.length; i++) {
-                        for (let j = i + 1; uniqueColor && j < colors.length; j++) {
-                            uniqueColor = colors[j] !== colors[i];
+                    for (let i = 0; uniqueColor && i < this.colors.length; i++) {
+                        for (let j = i + 1; uniqueColor && j < this.colors.length; j++) {
+                            uniqueColor = this.colors[j] !== this.colors[i];
                         }
                     }
                     return uniqueColor;
@@ -153,15 +154,19 @@ function playMastermind() {
                     return false;
                 },
 
-                isValidLength: function (length) {
-                    return this.colors.length === length;
+                isValidLength: function () {
+                    return this.colors.length === game.COMBINATION_LENGTH;
                 },
 
-                isValidColors: function (colors) {
+                isValidColors: function () {
                     let validColor = true;
-                    for (let i = 0; validColor && i < colors.length; i++) {
-                        validColor = this.searchColor(colors[i], this.VALID_COLORS);
+                    for (let i = 0; validColor && i < this.colors.length; i++) {
+                        validColor = this.searchColor(this.colors[i], this.VALID_COLORS);
                     }
+                },
+
+                setColors: function(colors){
+                    this.colors = colors;
                 },
 
                 howManyColorsInSamePosition: function (combination) {//todo implement logic
