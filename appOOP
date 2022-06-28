@@ -16,10 +16,9 @@ function playMastermind() {
         board.showIntroMessage();
         do {
             board.showAttempts();
-            let proposedCombination = createCombination();
-            proposedCombination.askForProposedCombination(); //todo in Board
-            game.addProposedCombinationToAttempts(proposedCombination);
-            game.isWinner(proposedCombination);
+            board.askForProposedCombination();
+            board.incrementAttempts();
+            game.isWinner(board);
         } while (!game.isEnded());
 
         function createGame() {
@@ -27,7 +26,6 @@ function playMastermind() {
                 ATTEMPTS_MAX_LENGTH: 10,
                 COLORS: "rgbym",
                 COMBINATION_LENGTH: 4,
-                attempts: [],
                 winner: false,
                 secretCombination: createCombination(),
 
@@ -35,16 +33,12 @@ function playMastermind() {
                     this.secretCombination.generateSecretCombination();
                 },
 
-                addProposedCombinationToAttempts: function (proposedCombination) {
-                    this.attempts[this.attempts.length] = proposedCombination;
-                },
-
                 isEnded: function () {
                     return this.attempts.length >= this.ATTEMPTS_MAX_LENGTH || this.winner === true;
                 },
 
-                isWinner: function (proposedCombination) {
-                    return this.secretCombination.howManyColorsInSamePosition(proposedCombination) === this.secretCombination.length;
+                isWinner: function (game) {
+                    return this.secretCombination.howManyColorsInSamePosition(game.proposedCombination) === this.secretCombination.length;
                 }
             }
         }
@@ -57,21 +51,59 @@ function playMastermind() {
                 MESSAGE_ARROW: " --> ",
                 MESSAGE_BLACKS: " blacks and ",
                 MESSAGE_WHITES: " whites",
+                attempts: [],
+                proposedCombination: createCombination(),
 
                 showIntroMessage: function () {
                     console.writeln(this.MESSAGE_MASTERMIND);
                 },
 
-                showAttempts: function() {
-                    console.writeln(game.attempts.length + this.MESSAGE_ATTEMPTS);
+                showAttempts: function () {
+                    console.writeln(this.attempts.length + this.MESSAGE_ATTEMPTS);
                     console.writeln(this.MESSAGE_ASTERISCS);
-                    for (let i = 0; i < game.attempts.length; i++) {
-                        console.writeln(game.attempts[i].toString()
+                    for (let i = 0; i < this.attempts.length; i++) {
+                        console.writeln(this.attempts[i].toString()
                             + this.MESSAGE_ARROW
-                            + game.attempts[i].howManyColorsInSamePosition(game.secretCombination)
+                            + this.attempts[i].howManyColorsInSamePosition(game.secretCombination)
                             + this.MESSAGE_BLACKS
-                            + game.attempts[i].howManyColorsInDiferentPosition(game.secretCombination)
+                            + this.attempts[i].howManyColorsInDiferentPosition(game.secretCombination)
                             + this.MESSAGE_WHITES);
+                    }
+                },
+
+                incrementAttempts: function () {
+                    this.attempts[this.attempts.length] = this.proposedCombination;
+                },
+
+                askForProposedCombination: function () {
+                    let colors = "";
+                    let errors = [];
+                    do {
+                        colors = console.readString("Proposed Combination: ");
+                        if (this.proposedCombination.isValidLength(colors.length)) {
+                            errors[errors.length] = this.errorCodes.WRONG_LENGTH_ERROR;
+                        }
+                        if (this.proposedCombination.isValidColors(colors)) {
+                            errors[errors.length] = this.errorCodes.WRONG_COLOR_ERROR;
+                        }
+                        if (this.proposedCombination.isUniqueColors(colors)) {
+                            errors[errors.length] = this.errorCodes.REPEATED_COLOR_ERROR;
+                        }
+                        this.showProposedInputErrors(errors);
+                    } while (errors.length != 0);
+                },
+
+                errorCodes: function () {
+                    return {
+                        WRONG_LENGTH_ERROR: `Wrong proposed combination length`,
+                        WRONG_COLOR_ERROR: `Wrong colors, they must be: ${this.VALID_COLORS}`,
+                        REPEATED_COLOR_ERROR: `Wrong proposed combination, at least one color is repeated`
+                    }
+                },
+
+                showProposedInputErrors: function(errors){
+                    for(let i = 0; i < errors.length; i++){
+                        console.writeln("error: " + errors[i]);
                     }
                 }
             }
@@ -82,10 +114,6 @@ function playMastermind() {
                 VALID_COLORS: "rgbym",
                 COMBINATION_LENGTH: 4,
                 colors: "",
-
-                askForProposedCombination: function () { //todo implement user input errors
-                    this.colors = console.readString("Proposed Combination:");
-                },
 
                 toString: function () {
                     return this.colors;
@@ -106,6 +134,16 @@ function playMastermind() {
                     this.colors = secretCombination;
                 },
 
+                isUniqueColors: function (colors) {
+                    let uniqueColor = true;
+                    for (let i = 0; uniqueColor && i < colors.length; i++) {
+                        for (let j = i + 1; uniqueColor && j < colors.length; j++) {
+                            uniqueColor = colors[j] !== colors[i];
+                        }
+                    }
+                    return uniqueColor;
+                },
+
                 searchColor: function (color, colors) {
                     for (let i = 0; i < colors.length; i++) {
                         if (colors[i] === color) {
@@ -115,12 +153,23 @@ function playMastermind() {
                     return false;
                 },
 
+                isValidLength: function (length) {
+                    return this.colors.length === length;
+                },
+
+                isValidColors: function (colors) {
+                    let validColor = true;
+                    for (let i = 0; validColor && i < colors.length; i++) {
+                        validColor = this.searchColor(colors[i], this.VALID_COLORS);
+                    }
+                },
+
                 howManyColorsInSamePosition: function (combination) {//todo implement logic
-                    return 2; 
+                    return 2;
                 },
 
                 howManyColorsInDiferentPosition: function (combination) {//todo implement logic
-                    return 3; 
+                    return 3;
                 }
             }
         };
