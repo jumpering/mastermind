@@ -6,7 +6,7 @@ function playMastermind() {
     let resume = createYesNoDialog();
     do {
         playGame();
-        resume.askQuestion("¿Play again?");
+        resume.read("¿Play again?");
     } while (resume.isAffirmative());
 
     function playGame() {
@@ -96,7 +96,7 @@ function playMastermind() {
                 errorCodes: function () {
                     return {
                         WRONG_LENGTH_ERROR: `Wrong proposed combination length`,
-                        WRONG_COLOR_ERROR: `Wrong colors, they must be: ${this.VALID_COLORS}`,
+                        WRONG_COLOR_ERROR: `Wrong colors, they must be: ${game.COLORS}`,
                         REPEATED_COLOR_ERROR: `Wrong proposed combination, at least one color is repeated`
                     }
                 },
@@ -186,7 +186,7 @@ function playMastermind() {
             response: "",
             error: false,
 
-            askQuestion: function (question) {
+            read: function (question) {
                 do {
                     this.response = console.readString(question);
                     this.error = this.response != this.YES && this.response != this.NO;
