@@ -76,7 +76,6 @@ function playMastermind() {
                 },
 
                 askForProposedCombination: function () {
-                    let colors = "";
                     let errors = [];
                     let errorCodes = this.errorCodes();
                     do {
