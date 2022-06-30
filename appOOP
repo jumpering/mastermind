@@ -12,7 +12,7 @@ function playMastermind() {
     function playGame() {
         let game = createGame();
         let board = createBoard(game);
-        game.initGame();
+        game.init();
         board.showIntroMessage();
         do {
             board.showAttempts();
@@ -24,12 +24,12 @@ function playMastermind() {
         function createGame() {
             return {
                 ATTEMPTS_MAX_LENGTH: 10,
-                COLORS: "rgbym",
+                COLORS: "rgbym", //todo declared in two clases!!
                 COMBINATION_LENGTH: 4,
                 winner: false,
                 secretCombination: createCombination(),
 
-                initGame: function () {
+                init: function () {
                     this.secretCombination.generateSecretCombination();
                 },
 
@@ -37,8 +37,8 @@ function playMastermind() {
                     return this.attempts.length >= this.ATTEMPTS_MAX_LENGTH || this.winner === true;
                 },
 
-                isWinner: function (game) {
-                    return this.secretCombination.howManyColorsInSamePosition(game.proposedCombination) === this.secretCombination.length;
+                isWinner: function (board) {
+                    return this.secretCombination.howManyColorsInSamePosition(board.proposedCombination) === this.secretCombination.length;
                 }
             }
         }
@@ -56,6 +56,7 @@ function playMastermind() {
 
                 showIntroMessage: function () {
                     console.writeln(this.MESSAGE_MASTERMIND);
+                    console.writeln("traza secret: " + game.secretCombination.toString());
                 },
 
                 showAttempts: function () {
@@ -101,8 +102,8 @@ function playMastermind() {
                     }
                 },
 
-                showProposedInputErrors: function(errors){
-                    for(let i = 0; i < errors.length; i++){
+                showProposedInputErrors: function (errors) {
+                    for (let i = 0; i < errors.length; i++) {
                         console.writeln("error: " + errors[i]);
                     }
                 }
@@ -164,7 +165,7 @@ function playMastermind() {
                     }
                 },
 
-                setColors: function(colors){
+                setColors: function (colors) {
                     this.colors = colors;
                 },
 
