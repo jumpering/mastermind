@@ -1,0 +1,232 @@
+const { Console } = require("console-mpds");
+const console = new Console();
+
+mastermind().playGame();
+
+function mastermind() {
+    return {
+        game: createGame(),
+        resume: createYesNoDialog(),
+        playGame: function () {
+            do {
+                this.game.init();
+                this.resume.read("¿Play again?");
+            } while (this.resume.isAffirmative());
+        }
+    }
+}
+
+function createGame() {
+    return {
+        PROPOSED_COMBINATIONS_MAX_LENGTH: 10,
+        COMBINATION_LENGTH: 4,
+        winner: false,
+        board: createBoard(this.COMBINATION_LENGTH),
+        proposedCombinations: [],
+
+        init: function () {
+            this.board.showIntroMessage();
+            do {
+                this.board.showProposedCombinations(this.proposedCombinations);
+                let proposedCombination = createCombination(this.COMBINATION_LENGTH);
+                proposedCombination.setColors(this.board.askForProposedCombination());
+                this.proposedCombinations[this.proposedCombinations.length] = proposedCombination;
+            } while (!isEnded());
+        },
+
+        isEnded: function () {
+            return this.proposedCombinations.length === this.PROPOSED_COMBINATIONS_MAX_LENGTH || this.isWinner === true;
+        },
+
+        isWinner: function () {
+            if (this.secretCombination.howManyColorsInSamePosition(this.proposedCombinations[this.proposedCombinations.length -1]) === this.COMBINATION_LENGTH){
+                this.board.showWinMessage();
+                this.winner = true;
+            }
+            if (this.proposedCombinations.length === this.ATTEMPTS_MAX_LENGTH && this.isWinner === false){
+                this.board.showLoseMessage();
+            }
+            return this.winner;
+        },
+
+    }
+}
+
+function createBoard(combinationLength) {
+    return {
+        MESSAGE_MASTERMIND: "-----MASTERMIND------\n",
+        MESSAGE_ASTERISCS: "****",
+        MESSAGE_ATTEMPTS: " attempt(s):",
+        MESSAGE_ARROW: " --> ",
+        MESSAGE_BLACKS: " blacks and ",
+        MESSAGE_WHITES: " whites",
+        COMBINATION_LENGTH: combinationLength,
+        secretCombination: createCombination(this.COMBINATION_LENGTH),
+
+        showIntroMessage: function () {
+            console.writeln("length " + this.COMBINATION_LENGTH);
+            this.secretCombination.generateSecretCombination();
+            console.writeln("secret: " + this.secretCombination.toString());
+            console.writeln(this.MESSAGE_MASTERMIND);
+        },
+
+        showProposedCombinations: function (proposedCombinations) {
+            console.writeln(proposedCombinations.length + this.MESSAGE_ATTEMPTS);
+            console.writeln(this.MESSAGE_ASTERISCS);
+            for (let i = 0; i < proposedCombinations.length; i++) {
+                console.writeln(proposedCombinations[i].toString()
+                    + this.MESSAGE_ARROW
+                    + proposedCombinations[i].howManyColorsInSamePosition(this.secretCombination)
+                    + this.MESSAGE_BLACKS
+                    + proposedCombinations[i].howManyColorsInDiferentPosition(this.secretCombination)
+                    + this.MESSAGE_WHITES);
+            }
+        },
+
+        askForProposedCombination: function () {
+            let errors = [];
+            let errorCodes = this.errorCodes();
+            let proposedCombination = createCombination(this.COMBINATION_LENGTH);
+            do {
+                proposedCombination.setColors(console.readString("Proposed Combination: "));
+                if (!proposedCombination.isValidLength()) {
+                    errors[errors.length] = errorCodes.WRONG_LENGTH_ERROR;
+                }
+                if (!proposedCombination.isValidColors()) {
+                    errors[errors.length] = errorCodes.WRONG_COLOR_ERROR;
+                }
+                if (!proposedCombination.isUniqueColors()) {
+                    errors[errors.length] = errorCodes.REPEATED_COLOR_ERROR;
+                }
+                this.showProposedInputErrors(errors);
+            } while (errors.length != 0);
+            return proposedCombination;
+        },
+
+        errorCodes: function () {
+            return {
+                WRONG_LENGTH_ERROR: `Wrong proposed combination length`,
+                WRONG_COLOR_ERROR: `Wrong colors, they must be: ${Colors().getColors()}`,
+                REPEATED_COLOR_ERROR: `Wrong proposed combination, at least one color is repeated`
+            }
+        },
+
+        showProposedInputErrors: function (errors) {
+            for (let i = 0; i < errors.length; i++) {
+                console.writeln("error: " + errors[i]);
+            }
+        },
+
+        showWinMessage: function (){
+            console.writeln("You win! ;)");
+        },
+
+        showLoseMessage: function (){
+            console.writeln("You lose! :(");
+        }        
+    }
+}
+
+function createCombination(combinationLength) {
+    return {
+        VALID_COLORS: Colors().getColors(),
+        COMBINATION_LENGTH: combinationLength,
+        colors: "",
+
+        toString: function () {
+            return this.colors;
+        },
+
+        generateSecretCombination: function () {
+            let secretCombination = "";
+            for (let i = 0; i < this.COMBINATION_LENGTH; i++) {
+                let repeated;
+                do {
+                    let randomColor = this.VALID_COLORS[parseInt(Math.random() * this.VALID_COLORS.length)];
+                    repeated = this.searchColor(randomColor, secretCombination);
+                    if (!repeated) {
+                        secretCombination += randomColor;
+                    }
+                } while (repeated);
+            }
+            this.colors = secretCombination;
+        },
+
+        isUniqueColors: function () {
+            let uniqueColor = true;
+            for (let i = 0; uniqueColor && i < this.colors.length; i++) {
+                for (let j = i + 1; uniqueColor && j < this.colors.length; j++) {
+                    uniqueColor = this.colors[j] !== this.colors[i];
+                }
+            }
+            return uniqueColor;
+        },
+
+        searchColor: function (color, colors) {
+            for (let i = 0; i < colors.length; i++) {
+                if (colors[i] === color) {
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        isValidLength: function () {
+            console.writeln("length total: " + this.colors.length + " la combination: " + this.COMBINATION_LENGTH);
+            return this.colors.length === this.COMBINATION_LENGTH;
+        },
+
+        isValidColors: function () {
+            let validColor = true;
+            for (let i = 0; validColor && i < this.colors.length; i++) {
+                validColor = this.searchColor(this.colors[i], this.VALID_COLORS);
+            }
+            return validColor; //todo esto no estaba?¿
+        },
+
+        setColors: function (colors) {
+            this.colors = colors;
+        },
+
+        howManyColorsInSamePosition: function (combination) {//todo implement logic
+            return 2;
+        },
+
+        howManyColorsInDiferentPosition: function (combination) {//todo implement logic
+            return 3;
+        }
+    }
+}
+
+function Colors() { //a falta de enumerados
+    return {
+        validColors: "rgbym",
+        getColors: function () {
+            return this.validColors;
+        }
+    }
+}
+
+function createYesNoDialog() {
+    return {
+        YES: "yes",
+        NO: "no",
+        response: "",
+        error: false,
+
+        read: function (question) {
+            do {
+                this.response = console.readString(question);
+                this.error = this.response != this.YES && this.response != this.NO;
+                if (this.error) {
+                    console.writeln("response must be " + this.YES + " or " + this.NO);
+                }
+            } while (this.error);
+            return this.response;
+        },
+
+        isAffirmative: function () {
+            return this.response === this.YES;
+        }
+    }
+}

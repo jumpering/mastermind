@@ -32,7 +32,6 @@ function playMastermind() {
     return game;
 
     function generateSecretCombination(COLORS, COMBINATION_LENGHT) {
-        //return "bycr";
         let secretCombination = "";
         for (let i = 0; i < COMBINATION_LENGHT; i++) {
           let repeated;
@@ -44,7 +43,6 @@ function playMastermind() {
             }
           } while (repeated);
         }
-        //console.writeln(secretCombination);
         return secretCombination;
     }
   }

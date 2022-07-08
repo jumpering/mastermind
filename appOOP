@@ -1,8 +1,17 @@
 const { Console } = require("console-mpds");
 const console = new Console();
 playMastermind();
+//mastermind2().play();//todo
 
-function playMastermind() {
+function mastermind2(){
+    return {
+        play: function(){
+            //todo
+        }
+    }
+}
+
+function playMastermind() { //todo not function, is class
     let resume = createYesNoDialog();
     do {
         playGame();
@@ -24,7 +33,6 @@ function playMastermind() {
         function createGame() {
             return {
                 ATTEMPTS_MAX_LENGTH: 10,
-                COLORS: "rgbym", //todo declared in two clases!!
                 COMBINATION_LENGTH: 4,
                 winner: false,
                 secretCombination: createCombination(),
@@ -52,13 +60,14 @@ function playMastermind() {
                 MESSAGE_BLACKS: " blacks and ",
                 MESSAGE_WHITES: " whites",
                 attempts: [],
-                proposedCombination: createCombination(),
-
+                COLORS: Colors().getColors(),
+                proposedCombination: createCombination(COLORS),
+    
                 showIntroMessage: function () {
                     console.writeln(this.MESSAGE_MASTERMIND);
                     console.writeln("traza secret: " + game.secretCombination.toString());
                 },
-
+    
                 showAttempts: function () {
                     console.writeln(this.attempts.length + this.MESSAGE_ATTEMPTS);
                     console.writeln(this.MESSAGE_ASTERISCS);
@@ -71,12 +80,12 @@ function playMastermind() {
                             + this.MESSAGE_WHITES);
                     }
                 },
-
+    
                 incrementAttempts: function () {
                     this.attempts[this.attempts.length] = this.proposedCombination;
                 },
-
-                askForProposedCombination: function () {
+    
+                askForProposedCombination: function () { //crear clase attempt
                     let errors = [];
                     let errorCodes = this.errorCodes();
                     do {
@@ -93,15 +102,15 @@ function playMastermind() {
                         this.showProposedInputErrors(errors);
                     } while (errors.length != 0);
                 },
-
+    
                 errorCodes: function () {
                     return {
                         WRONG_LENGTH_ERROR: `Wrong proposed combination length`,
-                        WRONG_COLOR_ERROR: `Wrong colors, they must be: ${game.COLORS}`,
+                        WRONG_COLOR_ERROR: `Wrong colors, they must be: ${this.COLORS}`,
                         REPEATED_COLOR_ERROR: `Wrong proposed combination, at least one color is repeated`
                     }
                 },
-
+    
                 showProposedInputErrors: function (errors) {
                     for (let i = 0; i < errors.length; i++) {
                         console.writeln("error: " + errors[i]);
@@ -110,9 +119,21 @@ function playMastermind() {
             }
         }
 
-        function createCombination() {
+        function createProposedCombination(){ //todo separar combination de secret y propo...
             return {
-                VALID_COLORS: "rgbym",
+                VALID_COLORS: createColors(),
+                COMBINATION_LENGTH: 4,
+                colors: "",
+
+                toString: function () {
+                    return this.colors;
+                }
+            }
+        }
+
+        function createCombination(validColors) {
+            return {
+                VALID_COLORS: validColors,
                 COMBINATION_LENGTH: 4,
                 colors: "",
 
@@ -180,6 +201,16 @@ function playMastermind() {
         };
     }
 
+
+    function Colors(){ //a falta de enumerados
+        return{
+            validColors: "rgbym",
+            getColors: function(){
+                this.validColors;
+            }
+        }
+    }
+
     function createYesNoDialog() {
         return {
             YES: "yes",
@@ -203,4 +234,6 @@ function playMastermind() {
             }
         }
     }
+
+
 }
